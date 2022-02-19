@@ -7,6 +7,7 @@
 
 import SwiftUI
 import MapKit
+import CloudKit
 
 struct ProfileView: View {
     
@@ -37,7 +38,7 @@ struct ProfileView: View {
                         TextField("First Name", text: $firstName)
                             .profileNameStyle()
                         
-                        TextField("Last Name", text: $firstName)
+                        TextField("Last Name", text: $lastName)
                             .profileNameStyle()
                         
                         TextField("Company Name", text: $companyName)
@@ -100,7 +101,44 @@ struct ProfileView: View {
             return
         }
         
-        //Create our CKRecord
+        //Create our CKRecord from the profile view
+        
+        let profileRecord = CKRecord(recordType: RecordType.profile)
+        profileRecord[DDGProfile.kFirstName] = firstName
+        profileRecord[DDGProfile.kLastName] = lastName
+        profileRecord[DDGProfile.kCompanyName] = companyName
+        profileRecord[DDGProfile.kBio] = bio
+        profileRecord[DDGProfile.kAvatar] = avatar.convertToCKAsset()
+        
+        // Get UserRecord ID form the container
+        CKContainer.default().fetchUserRecordID {recordID, error in
+            guard let recordID = recordID, error == nil else {
+                print(error!.localizedDescription)
+                return
+            }
+            // Get UserRecord from the Public Database
+            CKContainer.default().publicCloudDatabase.fetch(withRecordID: recordID) { userRecord, error in
+                guard let userRecord = userRecord, error == nil else {
+                    print(error!.localizedDescription)
+                    return
+                }
+                // Create reference on UserRecord to the DDGProfile we created
+                userRecord["userProfile"] = CKRecord.Reference(recordID: profileRecord.recordID, action: .none)
+
+            // Create a CKOperation to save our User and Profile Records
+                let operation = CKModifyRecordsOperation(recordsToSave: [userRecord, profileRecord])
+                //= {savedRecords,  , error in}
+                operation.modifyRecordsCompletionBlock = {savedRecords,  _, error in
+                    guard let savedRecords = savedRecords, error == nil else {
+                        print(error!.localizedDescription)
+                        return
+                    }
+                    print(savedRecords)
+                }
+                
+                CKContainer.default().publicCloudDatabase.add(operation)
+            }
+        }
     }
 }
 
