@@ -71,6 +71,7 @@
 		DF2D1DE0279D31D300E56123 /* LocationListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationListView.swift; sourceTree = "<group>"; };
 		DF2D1DE2279D31E000E56123 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		DF2D1DE4279DBAD300E56123 /* LocationDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDetailView.swift; sourceTree = "<group>"; };
+		DFAC672A27C1995A009CC80C /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		DFD58F9027A7A87100FC3F56 /* UIImage+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Ext.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -224,6 +225,7 @@
 				DF2D1DC8279D2EFC00E56123 /* DubDubGrubApp.swift */,
 				DF2D1DCC279D2EFC00E56123 /* Assets.xcassets */,
 				DF2D1DCE279D2EFC00E56123 /* Preview Content */,
+				DFAC672A27C1995A009CC80C /* README.md */,
 			);
 			path = DubDubGrub;
 			sourceTree = "<group>";
