@@ -62,7 +62,7 @@ struct ProfileView: View {
             Spacer()
             
             Button {
-                createProfile()
+                // createProfile()
             }label: {
                 DDGButton(title: "Create Profile")
             }
@@ -76,6 +76,9 @@ struct ProfileView: View {
                      Image(systemName: "keyboard.chevron.compact.down")
                 }
             }
+            .onAppear(perform: {
+                getProfile()
+            })
             .alert(item: $alertItem, content: { alertItem in
                 Alert(title: alertItem.title, message: alertItem.message, dismissButton: alertItem.dismissedButton)
             })
@@ -137,6 +140,47 @@ struct ProfileView: View {
                 }
                 
                 CKContainer.default().publicCloudDatabase.add(operation)
+            }
+        }
+    }
+    
+    func getProfile() {
+        //Get UserRecord
+        CKContainer.default().fetchUserRecordID {recordID, error in
+            guard let recordID = recordID, error == nil else {
+                print(error!.localizedDescription)
+                return
+            }
+            
+            // Get UserRecord from the Public Database
+            CKContainer.default().publicCloudDatabase.fetch(withRecordID: recordID) { userRecord, error in
+                guard let userRecord = userRecord, error == nil else {
+                    print(error!.localizedDescription)
+                    return
+                }
+                // yank out the reference
+                let profileReference = userRecord["userProfile"] as! CKRecord.Reference
+                let profileRecordID = profileReference.recordID
+                
+                //
+                CKContainer.default().publicCloudDatabase.fetch(withRecordID: profileRecordID) { profileRecord, error in
+                    guard let profileRecord = profileRecord, error == nil else {
+                        print(error!.localizedDescription)
+                        return
+                    }
+                    
+                    // Update UI
+                    DispatchQueue.main.async {
+                        // Convert to a profile
+                        let profile = DDGProfile(record: profileRecord)
+                        // Update stuff
+                        firstName = profile.firstName
+                        lastName = profile.lastName
+                        companyName = profile.companyName
+                        bio = profile.bio
+                        avatar = profile.createAvatarImage()
+                    }
+                }
             }
         }
     }
