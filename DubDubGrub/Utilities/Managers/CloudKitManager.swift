@@ -8,9 +8,33 @@
 
 import CloudKit
 
-struct CloudKitManager {
+final class CloudKitManager {
     
-    static func getLocations(completed: @escaping (Result<[DDGLocation], Error>) -> Void) {
+    static let shared = CloudKitManager()
+    
+    // Cannot be initialized anywhere else
+    private init() {}
+    
+    var userRecord: CKRecord?
+    
+    // Called on the background
+    func getUserRecord() {
+        CKContainer.default().fetchUserRecordID {recordID, error in
+            guard let recordID = recordID, error == nil else {
+                print(error!.localizedDescription)
+                return
+            }
+            CKContainer.default().publicCloudDatabase.fetch(withRecordID: recordID) { userRecord, error in
+                guard let userRecord = userRecord, error == nil else {
+                    print(error!.localizedDescription)
+                    return
+                }
+                self.userRecord = userRecord
+            }
+        }
+    }
+    
+    func getLocations(completed: @escaping (Result<[DDGLocation], Error>) -> Void) {
         let sortDescriptor = NSSortDescriptor(key: DDGLocation.kName, ascending: true)
         
         //recordType -- give our DDGLocations
@@ -32,14 +56,41 @@ struct CloudKitManager {
             //$0 means as you iterate through the array
             let locations = records.map {$0.convertToDDGLocation()}
             
-//            var locations: [DDGLocation] = []
-//
-//            for record in records {
-//                let location = DDGLocation(record: record)
-//                locations.append(location)
-//            }
+            //            var locations: [DDGLocation] = []
+            //
+            //            for record in records {
+            //                let location = DDGLocation(record: record)
+            //                locations.append(location)
+            //            }
             
             completed(.success(locations))
+        }
+    }
+    
+    func batchSave(records: [CKRecord], completed: @escaping(Result<[CKRecord], Error>) -> Void) {
+        
+        let operation = CKModifyRecordsOperation(recordsToSave: records)
+        //= {savedRecords,  , error in}
+        operation.modifyRecordsCompletionBlock = {savedRecords,  _, error in
+            guard let savedRecords = savedRecords, error == nil else {
+                print(error!.localizedDescription)
+                completed(.failure(error!))
+                return
+            }
+            completed(.success(savedRecords))
+        }
+        
+        CKContainer.default().publicCloudDatabase.add(operation)
+    }
+    
+    func fetchRecord(with id: CKRecord.ID, completed: @escaping(Result<CKRecord, Error>) -> Void) {
+        CKContainer.default().publicCloudDatabase.fetch(withRecordID: id) { record, error in
+            guard let record = record, error == nil else {
+                completed(.failure(error!))
+                return
+            }
+            
+            completed(.success(record))
         }
     }
 }

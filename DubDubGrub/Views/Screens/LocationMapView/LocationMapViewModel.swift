@@ -72,7 +72,7 @@ final class LocationViewModel: NSObject, ObservableObject {
     }
     
     func getLocations(for locationManager: LocationManager) {
-        CloudKitManager.getLocations { [self] result in
+        CloudKitManager.shared.getLocations { [self] result in
             // Make sure we update UI in main thread???
             DispatchQueue.main.async {
                 switch result {
