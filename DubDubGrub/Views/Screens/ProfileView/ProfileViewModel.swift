@@ -16,7 +16,9 @@ final class ProfileViewModel: ObservableObject {
     @Published var bio         = ""
     @Published var avatar      = PlaceHolderImage.avatar
     @Published var isShowingPhotoPicker = false
+    @Published var isLoading = false
     @Published var alertItem: AlertItem?
+
     
     func isValidProfile() -> Bool {
         guard !firstName.isEmpty,
@@ -31,7 +33,6 @@ final class ProfileViewModel: ObservableObject {
     
     func createProfile() {
         guard isValidProfile() else {
-            //show alert
             alertItem = AlertContext.invalidProfile
             return
         }
@@ -41,20 +42,24 @@ final class ProfileViewModel: ObservableObject {
         let profileRecord = createProfileRecord()
         
         guard let userRecord = CloudKitManager.shared.userRecord else {
-            // Show an alert
+            alertItem = AlertContext.noUserRecord
             return
         }
         
         userRecord["userProfile"] = CKRecord.Reference(recordID: profileRecord.recordID, action: .none)
         
+        showLoadingView()
         CloudKitManager.shared.batchSave(records: [userRecord, profileRecord]) { result in
-            switch result {
-            case .success(_):
-                // show alert
-                break
-            case .failure(_):
-                // show alert
-                break
+            DispatchQueue.main.async { [self] in
+                hideLoadingView()
+                switch result {
+                case .success(_):
+                    alertItem = AlertContext.createProfileSuccess
+                    break
+                case .failure(_):
+                    alertItem = AlertContext.createProfileFaliure
+                    break
+                }
             }
         }
     }
@@ -64,14 +69,11 @@ final class ProfileViewModel: ObservableObject {
         
         // make sure we have a user record
         guard let userRecord = CloudKitManager.shared.userRecord else {
-            // Show an alert
+            alertItem = AlertContext.noUserRecord
             return
         }
         // make sure we have a reference to a profile
-        guard let profileReference = userRecord["userProfile"] as? CKRecord.Reference else {
-            // show alert
-            return
-        }
+        guard let profileReference = userRecord["userProfile"] as? CKRecord.Reference else { return }
         //get profile id from reference
         let profileRecordID = profileReference.recordID
         
@@ -89,7 +91,7 @@ final class ProfileViewModel: ObservableObject {
                     avatar = profile.createAvatarImage()
                     
                 case .failure(_):
-                    // Show alert
+                    alertItem = AlertContext.unableToGetProfile
                     break
                 }
             }
@@ -105,4 +107,7 @@ final class ProfileViewModel: ObservableObject {
         
         return profileRecord
     }
+    
+    private func showLoadingView() {isLoading = true}
+    private func hideLoadingView() {isLoading = false}
 }
