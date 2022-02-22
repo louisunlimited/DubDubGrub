@@ -37,7 +37,9 @@ struct ProfileModalView: View {
             .cornerRadius(26)
             .overlay (
                 Button {
-                    isShowingProfileModal = false
+                    withAnimation {
+                        isShowingProfileModal = false
+                    }
                 } label: {
                     XDismissButton()
                 }, alignment: .topTrailing)
@@ -47,7 +49,7 @@ struct ProfileModalView: View {
                 .scaledToFill()
                 .frame(width: 110, height: 110)
                 .clipShape(Circle())
-                .shadow(color: .blue.opacity(0.5), radius: 4, x: 0, y: 6)
+                .shadow(color: .black.opacity(0.5), radius: 4, x: 0, y: 6)
                 .offset(y: -120)
         }
     }
