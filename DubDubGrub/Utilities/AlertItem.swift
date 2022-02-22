@@ -54,4 +54,12 @@ struct AlertContext {
     static let unableToGetProfile = AlertItem(title: Text("Unable to retrieve Profile"),
                                                 message: Text("Your profile cannot be retrieved at this time"),
                                                 dismissedButton: .default(Text("OK")))
+    
+    static let updateProfileSuccess = AlertItem(title: Text("Successfully updated Profile!"),
+                                                message: Text("Your profile was updated successfully"),
+                                                dismissedButton: .default(Text("OK")))
+    
+    static let updateProfileFailed = AlertItem(title: Text("Failed to updated Profile!"),
+                                                message: Text("Your profile was not updated successfully, please check again"),
+                                                dismissedButton: .default(Text("OK")))
 }
