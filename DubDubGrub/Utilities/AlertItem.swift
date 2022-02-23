@@ -67,4 +67,17 @@ struct AlertContext {
     static let invalidPhoneNumber = AlertItem(title: Text("Invalid Phone Number"),
                                                 message: Text("The Phone Number for this location is not valid"),
                                                 dismissedButton: .default(Text("OK")))
+    
+    static let unableToGetCheckInStatus = AlertItem(title: Text("Server Error"),
+                                                message: Text("Unable to get Checkedin status"),
+                                                dismissedButton: .default(Text("OK")))
+    
+    static let unableToCheckInOrOut = AlertItem(title: Text("Server Error"),
+                                                message: Text("We are unable to check in/out at this time,\n please try again later"),
+                                                dismissedButton: .default(Text("OK")))
+    
+    static let unableToGetCheckInProfiles = AlertItem(title: Text("Server Error"),
+                                                message: Text("Unable to get users check in at this time"),
+                                                dismissedButton: .default(Text("OK")))
+
 }

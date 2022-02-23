@@ -11,6 +11,7 @@ import CloudKit
 final class CloudKitManager {
     
     static let shared = CloudKitManager()
+    var profileRecordID: CKRecord.ID?
     
     // Cannot be initialized anywhere else
     private init() {}
@@ -30,6 +31,10 @@ final class CloudKitManager {
                     return
                 }
                 self.userRecord = userRecord
+                
+                if let profileReference = userRecord["userProfile"] as? CKRecord.Reference {
+                    self.profileRecordID = profileReference.recordID
+                }
             }
         }
     }
@@ -64,6 +69,22 @@ final class CloudKitManager {
             //            }
             
             completed(.success(locations))
+        }
+    }
+    
+    func getCheckedInProfiles(for locationID:CKRecord.ID, completed: @escaping(Result<[DDGProfile], Error>) -> Void) {
+        // put restaurant to each person: WWDC16 CloudKit Best Practices
+        // Back Pointers
+        let reference = CKRecord.Reference(recordID: locationID, action: .none)
+        let predicate = NSPredicate(format: "isCheckedIn == %@", reference)
+        let query = CKQuery(recordType: RecordType.profile, predicate: predicate)
+        CKContainer.default().publicCloudDatabase.perform(query, inZoneWith: nil) {records, error in
+            guard let records = records, error == nil else {
+                completed(.failure(error!))
+                return
+            }
+            let profile = records.map {$0.convertToDDGProfile()}
+            completed(.success(profile))
         }
     }
     
