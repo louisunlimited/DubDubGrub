@@ -71,7 +71,7 @@ struct AlertContext {
     static let unableToGetCheckInStatus = AlertItem(title: Text("Server Error"),
                                                 message: Text("Unable to get Checkedin status"),
                                                 dismissedButton: .default(Text("OK")))
-    
+    // This could be bacause iCloud being logged off
     static let unableToCheckInOrOut = AlertItem(title: Text("Server Error"),
                                                 message: Text("We are unable to check in/out at this time,\n please try again later"),
                                                 dismissedButton: .default(Text("OK")))
