@@ -46,7 +46,7 @@ struct ProfileView: View {
                             Button {viewModel.checkOut()
                                 
                             } label: {
-                                 Label("Check Out", systemImage: "mappim.and.ellipse")
+                                 Label("Check Out", systemImage: "mappin.and.ellipse")
                                     .font(.system(size: 12,weight: .semibold))
                                     .foregroundColor(.white)
                                     .padding(10)
