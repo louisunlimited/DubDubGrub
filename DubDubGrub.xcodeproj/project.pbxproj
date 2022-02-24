@@ -41,6 +41,7 @@
 		DFEC59DE27C45203004BC118 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFEC59DD27C45203004BC118 /* LoadingView.swift */; };
 		DFEC59E127C59D60004BC118 /* LocationDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFEC59E027C59D60004BC118 /* LocationDetailViewModel.swift */; };
 		DFEC59E427C5A33C004BC118 /* ProfileModalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFEC59E327C5A33C004BC118 /* ProfileModalView.swift */; };
+		DFEC59E727C74C6F004BC118 /* LocationListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFEC59E627C74C6F004BC118 /* LocationListViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -80,6 +81,7 @@
 		DFEC59DD27C45203004BC118 /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		DFEC59E027C59D60004BC118 /* LocationDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDetailViewModel.swift; sourceTree = "<group>"; };
 		DFEC59E327C5A33C004BC118 /* ProfileModalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileModalView.swift; sourceTree = "<group>"; };
+		DFEC59E627C74C6F004BC118 /* LocationListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationListViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -111,7 +113,6 @@
 			children = (
 				DF2BD49A279E2A3A000CA6B8 /* CustomModifiers.swift */,
 				DF2BD4A4279E2CA7000CA6B8 /* CustomViews */,
-				DF2BD4A3279E2C9C000CA6B8 /* Cells */,
 				DF2BD4A2279E2C77000CA6B8 /* Screens */,
 			);
 			path = Views;
@@ -120,22 +121,14 @@
 		DF2BD4A2279E2C77000CA6B8 /* Screens */ = {
 			isa = PBXGroup;
 			children = (
+				DFEC59E527C74C48004BC118 /* LocationListView */,
 				DFEC59DF27C59D51004BC118 /* LocationDetailView */,
 				DFAC672B27C1A540009CC80C /* ProfileView */,
 				DF2BD4B6279E72EE000CA6B8 /* LocationMapView */,
 				DF2D1DDC279D318F00E56123 /* AppTabView.swift */,
-				DF2D1DE0279D31D300E56123 /* LocationListView.swift */,
 				DF2BD4BE27A109F7000CA6B8 /* OnBoardView.swift */,
 			);
 			path = Screens;
-			sourceTree = "<group>";
-		};
-		DF2BD4A3279E2C9C000CA6B8 /* Cells */ = {
-			isa = PBXGroup;
-			children = (
-				DF2BD496279E2816000CA6B8 /* LocationCell.swift */,
-			);
-			path = Cells;
 			sourceTree = "<group>";
 		};
 		DF2BD4A4279E2CA7000CA6B8 /* CustomViews */ = {
@@ -272,6 +265,16 @@
 			path = LocationDetailView;
 			sourceTree = "<group>";
 		};
+		DFEC59E527C74C48004BC118 /* LocationListView */ = {
+			isa = PBXGroup;
+			children = (
+				DFEC59E627C74C6F004BC118 /* LocationListViewModel.swift */,
+				DF2D1DE0279D31D300E56123 /* LocationListView.swift */,
+				DF2BD496279E2816000CA6B8 /* LocationCell.swift */,
+			);
+			path = LocationListView;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -365,6 +368,7 @@
 				DF2BD49D279E2A72000CA6B8 /* View+Ext.swift in Sources */,
 				DFEC59E427C5A33C004BC118 /* ProfileModalView.swift in Sources */,
 				DF2BD497279E2816000CA6B8 /* LocationCell.swift in Sources */,
+				DFEC59E727C74C6F004BC118 /* LocationListViewModel.swift in Sources */,
 				DF2BD4B3279E6EFD000CA6B8 /* CKRecord+Ext.swift in Sources */,
 				DF2BD4BB279F6228000CA6B8 /* LocationManager.swift in Sources */,
 				DF2BD4BD279F68B4000CA6B8 /* CKAsset+Ext.swift in Sources */,
