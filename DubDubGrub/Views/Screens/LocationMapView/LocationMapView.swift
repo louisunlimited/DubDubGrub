@@ -18,7 +18,8 @@ struct LocationMapView: View {
         ZStack {
             Map(coordinateRegion: $viewModel.region, showsUserLocation: true, annotationItems: locationManager.locations) { location in
                 MapAnnotation(coordinate: location.location.coordinate, anchorPoint: CGPoint(x: 0.5, y: 0.75)) {
-                    DDGAnnotation(location: location)
+                    DDGAnnotation(location: location
+                                  , number: viewModel.checkedInProfiles[location.id, default: 0])
                         .onTapGesture {
                             locationManager.selectedLocation = location
                             
@@ -53,12 +54,11 @@ struct LocationMapView: View {
             Alert(title: alertItem.title, message: alertItem.message, dismissButton: alertItem.dismissedButton)
         })
         .onAppear {
-            //viewModel.runStartupChecks()
-            
             //We don't want to get this everytime
             if locationManager.locations.isEmpty {
                 viewModel.getLocations(for: locationManager)
             }
+            viewModel.getCheckedInCount()
         }
     }
 }
