@@ -42,6 +42,8 @@
 		DFEC59E127C59D60004BC118 /* LocationDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFEC59E027C59D60004BC118 /* LocationDetailViewModel.swift */; };
 		DFEC59E427C5A33C004BC118 /* ProfileModalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFEC59E327C5A33C004BC118 /* ProfileModalView.swift */; };
 		DFEC59E727C74C6F004BC118 /* LocationListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFEC59E627C74C6F004BC118 /* LocationListViewModel.swift */; };
+		DFEC59EA27C84725004BC118 /* MapBalloon.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFEC59E927C84725004BC118 /* MapBalloon.swift */; };
+		DFEC59EC27C84A6C004BC118 /* DDGAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFEC59EB27C84A6C004BC118 /* DDGAnnotation.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -82,6 +84,8 @@
 		DFEC59E027C59D60004BC118 /* LocationDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDetailViewModel.swift; sourceTree = "<group>"; };
 		DFEC59E327C5A33C004BC118 /* ProfileModalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileModalView.swift; sourceTree = "<group>"; };
 		DFEC59E627C74C6F004BC118 /* LocationListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationListViewModel.swift; sourceTree = "<group>"; };
+		DFEC59E927C84725004BC118 /* MapBalloon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapBalloon.swift; sourceTree = "<group>"; };
+		DFEC59EB27C84A6C004BC118 /* DDGAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DDGAnnotation.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -134,6 +138,7 @@
 		DF2BD4A4279E2CA7000CA6B8 /* CustomViews */ = {
 			isa = PBXGroup;
 			children = (
+				DFEC59E827C8470F004BC118 /* Map Annotation */,
 				DF2BD4C527A11115000CA6B8 /* UIKit Components */,
 				DF2BD4C227A10CCB000CA6B8 /* Buttons */,
 				DF2BD498279E283B000CA6B8 /* AvatarView.swift */,
@@ -275,6 +280,15 @@
 			path = LocationListView;
 			sourceTree = "<group>";
 		};
+		DFEC59E827C8470F004BC118 /* Map Annotation */ = {
+			isa = PBXGroup;
+			children = (
+				DFEC59E927C84725004BC118 /* MapBalloon.swift */,
+				DFEC59EB27C84A6C004BC118 /* DDGAnnotation.swift */,
+			);
+			path = "Map Annotation";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -367,11 +381,13 @@
 				DF2BD4B5279E6FEB000CA6B8 /* AlertItem.swift in Sources */,
 				DF2BD49D279E2A72000CA6B8 /* View+Ext.swift in Sources */,
 				DFEC59E427C5A33C004BC118 /* ProfileModalView.swift in Sources */,
+				DFEC59EC27C84A6C004BC118 /* DDGAnnotation.swift in Sources */,
 				DF2BD497279E2816000CA6B8 /* LocationCell.swift in Sources */,
 				DFEC59E727C74C6F004BC118 /* LocationListViewModel.swift in Sources */,
 				DF2BD4B3279E6EFD000CA6B8 /* CKRecord+Ext.swift in Sources */,
 				DF2BD4BB279F6228000CA6B8 /* LocationManager.swift in Sources */,
 				DF2BD4BD279F68B4000CA6B8 /* CKAsset+Ext.swift in Sources */,
+				DFEC59EA27C84725004BC118 /* MapBalloon.swift in Sources */,
 				DF2BD49F279E2B27000CA6B8 /* DDGButton.swift in Sources */,
 				DFEC59DE27C45203004BC118 /* LoadingView.swift in Sources */,
 				DFD58F9127A7A87100FC3F56 /* UIImage+Ext.swift in Sources */,
