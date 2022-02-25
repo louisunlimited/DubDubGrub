@@ -45,7 +45,6 @@ struct LocationCell: View {
                         }
                     }
                 }
-                
             }
             .padding(.leading)
         }

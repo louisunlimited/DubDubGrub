@@ -12,7 +12,6 @@ enum ProfileContext { case create, update }
 final class ProfileViewModel: ObservableObject {
     
     @Published var isCheckedIn = false
-    
     @Published var firstName   = ""
     @Published var lastName    = ""
     @Published var companyName = ""
@@ -29,7 +28,7 @@ final class ProfileViewModel: ObservableObject {
     var profileContext: ProfileContext = .create
     
     
-    func isValidProfile() -> Bool {
+    private func isValidProfile() -> Bool {
         guard !firstName.isEmpty,
               !lastName.isEmpty,
               !companyName.isEmpty,
@@ -79,6 +78,7 @@ final class ProfileViewModel: ObservableObject {
         }
     }
     
+    
     func getCheckedInStatus() {
         guard let profileRecordID = CloudKitManager.shared.profileRecordID else { return }
         
@@ -97,6 +97,7 @@ final class ProfileViewModel: ObservableObject {
             }
         }
     }
+    
     
     func checkOut() {
         guard let profileID = CloudKitManager.shared.profileRecordID  else {
@@ -125,6 +126,7 @@ final class ProfileViewModel: ObservableObject {
             }
         }
     }
+    
     
     func getProfile() {
         
@@ -160,6 +162,7 @@ final class ProfileViewModel: ObservableObject {
         }
     }
     
+    
     func updateProfile() {
         guard isValidProfile() else {
             alertItem = AlertContext.invalidProfile
@@ -192,6 +195,7 @@ final class ProfileViewModel: ObservableObject {
         }
         
     }
+    
     
     private func createProfileRecord() -> CKRecord {
         let profileRecord = CKRecord(recordType: RecordType.profile)

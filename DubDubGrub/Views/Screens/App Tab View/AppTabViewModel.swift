@@ -20,6 +20,7 @@ final class AppTabViewModel: NSObject, ObservableObject {
         UserDefaults.standard.bool(forKey: kHasSeenOnboardView)
     }
     
+    
     func runStartupChecks() {
         //check where this user has seen the onbard screen
         if !hasSeenOnboardView {
@@ -31,6 +32,7 @@ final class AppTabViewModel: NSObject, ObservableObject {
             checkIfLocationServicesIsEnabled()
         }
     }
+    
     
     func checkIfLocationServicesIsEnabled() {
         if CLLocationManager.locationServicesEnabled() {
@@ -44,6 +46,7 @@ final class AppTabViewModel: NSObject, ObservableObject {
             alertItem = AlertContext.locationDisabled
         }
     }
+    
     
     private func checkLocationAuthorization() {
         guard let deviceLocationManager = deviceLocationManager else {

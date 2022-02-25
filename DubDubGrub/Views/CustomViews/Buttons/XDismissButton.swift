@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct XDismissButton: View {
+    
     var body: some View {
         ZStack {
             Circle()

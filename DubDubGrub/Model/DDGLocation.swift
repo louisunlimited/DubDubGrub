@@ -51,6 +51,7 @@ struct DDGLocation: Identifiable {
         return asset.convertToUIImage(in: .square)
     }
     
+    
     func createBannerImage() -> UIImage {
         guard let asset = bannerAsset else { return PlaceHolderImage.banner }
         return asset.convertToUIImage(in: .baner)

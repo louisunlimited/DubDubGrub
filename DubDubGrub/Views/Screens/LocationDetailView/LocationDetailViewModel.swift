@@ -43,6 +43,7 @@ final class LocationDetailViewModel: ObservableObject {
         mapItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeWalking])
     }
     
+    
     func callLocation() {
         guard let url = URL(string: "tel://\(location.phoneNumber)") else {
             alertItem = AlertContext.invalidPhoneNumber
@@ -55,6 +56,7 @@ final class LocationDetailViewModel: ObservableObject {
         //        }
         UIApplication.shared.open(url)
     }
+    
     
     func getCheckedInStatus() {
         guard let profileRecordID = CloudKitManager.shared.profileRecordID else { return }
@@ -79,6 +81,7 @@ final class LocationDetailViewModel: ObservableObject {
             }
         }
     }
+    
     
     func updateCheckInStatus(to checkInStatus: CheckInStatus) {
         // Get DDG Profile
@@ -129,6 +132,7 @@ final class LocationDetailViewModel: ObservableObject {
             }
         }
     }
+    
     
     func getCheckedInProfiles() {
         showLoadingView()

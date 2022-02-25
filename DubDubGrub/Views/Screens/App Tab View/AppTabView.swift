@@ -9,7 +9,7 @@ import SwiftUI
 
 struct AppTabView: View {
     
-    @ StateObject private var viewModel = AppTabViewModel()
+    @StateObject private var viewModel = AppTabViewModel()
     
     var body: some View {
         TabView {

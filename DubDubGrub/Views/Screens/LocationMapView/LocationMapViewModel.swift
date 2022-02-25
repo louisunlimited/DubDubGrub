@@ -11,12 +11,11 @@ import CloudKit
 final class LocationViewModel: NSObject, ObservableObject {
     
     @Published var checkedInProfiles: [CKRecord.ID: Int] = [:]
-    
     @Published var isShowingDetailView = false
-    
+    @Published var alertItem: AlertItem?
     @Published var region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 37.331516, longitude: -121.891054),
                                                span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
-    @Published var alertItem: AlertItem?
+    
     
     func getLocations(for locationManager: LocationManager) {
         CloudKitManager.shared.getLocations { [self] result in
@@ -33,6 +32,7 @@ final class LocationViewModel: NSObject, ObservableObject {
         }
     }
     
+    
     func getCheckedInCount() {
         CloudKitManager.shared.getCheckedInProfilesCount { result in
             DispatchQueue.main.async {
@@ -46,6 +46,5 @@ final class LocationViewModel: NSObject, ObservableObject {
             }
         }
     }
-    
 }
 

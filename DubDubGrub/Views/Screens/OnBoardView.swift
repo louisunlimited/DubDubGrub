@@ -51,9 +51,7 @@ struct OnBoardView_Previews: PreviewProvider {
 struct OnBoardInfoView: View {
     
     var imageName: String
-    
     var title: String
-    
     var description: String
     
     var body: some View {

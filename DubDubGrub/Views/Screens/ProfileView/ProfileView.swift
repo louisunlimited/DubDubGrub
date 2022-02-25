@@ -10,6 +10,7 @@ import MapKit
 import CloudKit
 
 struct ProfileView: View {
+    
     @StateObject private var viewModel = ProfileViewModel()
     
     var body: some View {
@@ -76,7 +77,7 @@ struct ProfileView: View {
                 
             }
             
-            if viewModel.isLoading {LoadingView()}
+            if viewModel.isLoading { LoadingView() }
         }
         .navigationTitle("Profile")
             .toolbar {
@@ -101,6 +102,7 @@ struct ProfileView: View {
 }
 
 struct ProfileView_Previews: PreviewProvider {
+    
     static var previews: some View {
         NavigationView{
             ProfileView()
@@ -110,6 +112,7 @@ struct ProfileView_Previews: PreviewProvider {
 
 
 struct NameBackgroundView: View {
+    
     var body: some View {
         Color(.secondarySystemBackground)
             .frame(height: 128)
@@ -120,6 +123,7 @@ struct NameBackgroundView: View {
 
 
 struct EditImage: View {
+    
     var body: some View {
         Image(systemName: "square.and.pencil")
             .resizable()

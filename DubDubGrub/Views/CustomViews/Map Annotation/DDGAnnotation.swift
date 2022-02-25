@@ -32,10 +32,7 @@ struct DDGAnnotation: View {
                         .clipShape(Capsule())
                         .offset(x: 20, y: -28)
                 }
-                
             }
-            
-            
             Text(location.name)
                 .font(.caption.weight(.semibold))
         }

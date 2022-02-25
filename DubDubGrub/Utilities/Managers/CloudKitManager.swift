@@ -39,6 +39,7 @@ final class CloudKitManager {
         }
     }
     
+    
     func getLocations(completed: @escaping (Result<[DDGLocation], Error>) -> Void) {
         let sortDescriptor = NSSortDescriptor(key: DDGLocation.kName, ascending: true)
         
@@ -72,6 +73,7 @@ final class CloudKitManager {
         }
     }
     
+    
     func getCheckedInProfiles(for locationID:CKRecord.ID, completed: @escaping(Result<[DDGProfile], Error>) -> Void) {
         // put restaurant to each person: WWDC16 CloudKit Best Practices
         // Back Pointers
@@ -87,6 +89,8 @@ final class CloudKitManager {
             completed(.success(profile))
         }
     }
+    
+    
     // Gets all profiles into a Dict
     func getCheckedInProfilesDictionary(completed: @escaping(Result<[CKRecord.ID: [DDGProfile]], Error>) -> Void) {
         let preidcate = NSPredicate(format: "isCheckedInNilCheck == 1")
@@ -135,8 +139,8 @@ final class CloudKitManager {
             } else {
                 checkedInProfiles[locationReference.recordID] = 1
             }
-            
         }
+        
         // cursor: CloudKit has a limit
         operation.queryCompletionBlock = { cursor, error in
             guard error == nil else {
@@ -161,9 +165,9 @@ final class CloudKitManager {
             }
             completed(.success(savedRecords))
         }
-        
         CKContainer.default().publicCloudDatabase.add(operation)
     }
+    
     
     func save(record: CKRecord, completed: @escaping(Result<CKRecord, Error>) -> Void) {
         CKContainer.default().publicCloudDatabase.save(record) { record, error in
@@ -171,10 +175,10 @@ final class CloudKitManager {
                 completed(.failure(error!))
                 return
             }
-            
             completed(.success(record))
         }
     }
+    
     
     func fetchRecord(with id: CKRecord.ID, completed: @escaping(Result<CKRecord, Error>) -> Void) {
         CKContainer.default().publicCloudDatabase.fetch(withRecordID: id) { record, error in
@@ -182,7 +186,6 @@ final class CloudKitManager {
                 completed(.failure(error!))
                 return
             }
-            
             completed(.success(record))
         }
     }

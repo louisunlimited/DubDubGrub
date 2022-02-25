@@ -9,6 +9,7 @@ import CloudKit
 import UIKit
 
 extension CKAsset {
+    
     func convertToUIImage(in dimension: ImageDimension) -> UIImage {
         // Distinguish what placeholder to use square/banner
         let placeholder = ImageDimension.getPlaceholder(for: dimension)
