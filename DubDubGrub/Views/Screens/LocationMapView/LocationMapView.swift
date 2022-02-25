@@ -17,7 +17,16 @@ struct LocationMapView: View {
     var body: some View {
         ZStack {
             Map(coordinateRegion: $viewModel.region, showsUserLocation: true, annotationItems: locationManager.locations) { location in
-                MapMarker(coordinate: location.location.coordinate, tint: .brandPrimary)
+                MapAnnotation(coordinate: location.location.coordinate, anchorPoint: CGPoint(x: 0.5, y: 0.75)) {
+                    DDGAnnotation(location: location)
+                        .onTapGesture {
+                            locationManager.selectedLocation = location
+                            
+                            if let _ = locationManager.selectedLocation {
+                                viewModel.isShowingDetailView = true
+                            }
+                        }
+                }
             }
             .accentColor(.grubRed)
             .ignoresSafeArea()
@@ -29,14 +38,22 @@ struct LocationMapView: View {
                 Spacer()
             }
         }
-        .sheet(isPresented: $viewModel.isShowingOnbardView, onDismiss: viewModel.checkIfLocationServicesIsEnabled, content: {
-            OnBoardView(isShowingOnBoardView: $viewModel.isShowingOnbardView)
-        })
+        .sheet(isPresented: $viewModel.isShowingDetailView) {
+            NavigationView {
+                LocationDetailView(viewModel: LocationDetailViewModel(location: locationManager.selectedLocation!))
+                    .toolbar {
+                        Button("Dismiss") {
+                            viewModel.isShowingDetailView = false
+                        }
+                        .accentColor(.brandPrimary)
+                    }
+            }
+        }
         .alert(item: $viewModel.alertItem, content: { alertItem in
             Alert(title: alertItem.title, message: alertItem.message, dismissButton: alertItem.dismissedButton)
         })
         .onAppear {
-            viewModel.runStartupChecks()
+            //viewModel.runStartupChecks()
             
             //We don't want to get this everytime
             if locationManager.locations.isEmpty {

@@ -44,6 +44,7 @@
 		DFEC59E727C74C6F004BC118 /* LocationListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFEC59E627C74C6F004BC118 /* LocationListViewModel.swift */; };
 		DFEC59EA27C84725004BC118 /* MapBalloon.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFEC59E927C84725004BC118 /* MapBalloon.swift */; };
 		DFEC59EC27C84A6C004BC118 /* DDGAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFEC59EB27C84A6C004BC118 /* DDGAnnotation.swift */; };
+		DFEC59EF27C857DA004BC118 /* AppTabViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFEC59EE27C857DA004BC118 /* AppTabViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -86,6 +87,7 @@
 		DFEC59E627C74C6F004BC118 /* LocationListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationListViewModel.swift; sourceTree = "<group>"; };
 		DFEC59E927C84725004BC118 /* MapBalloon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapBalloon.swift; sourceTree = "<group>"; };
 		DFEC59EB27C84A6C004BC118 /* DDGAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DDGAnnotation.swift; sourceTree = "<group>"; };
+		DFEC59EE27C857DA004BC118 /* AppTabViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTabViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -125,11 +127,11 @@
 		DF2BD4A2279E2C77000CA6B8 /* Screens */ = {
 			isa = PBXGroup;
 			children = (
+				DFEC59ED27C857C9004BC118 /* App Tab View */,
 				DFEC59E527C74C48004BC118 /* LocationListView */,
 				DFEC59DF27C59D51004BC118 /* LocationDetailView */,
 				DFAC672B27C1A540009CC80C /* ProfileView */,
 				DF2BD4B6279E72EE000CA6B8 /* LocationMapView */,
-				DF2D1DDC279D318F00E56123 /* AppTabView.swift */,
 				DF2BD4BE27A109F7000CA6B8 /* OnBoardView.swift */,
 			);
 			path = Screens;
@@ -289,6 +291,15 @@
 			path = "Map Annotation";
 			sourceTree = "<group>";
 		};
+		DFEC59ED27C857C9004BC118 /* App Tab View */ = {
+			isa = PBXGroup;
+			children = (
+				DFEC59EE27C857DA004BC118 /* AppTabViewModel.swift */,
+				DF2D1DDC279D318F00E56123 /* AppTabView.swift */,
+			);
+			path = "App Tab View";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -370,6 +381,7 @@
 				DF2D1DE1279D31D300E56123 /* LocationListView.swift in Sources */,
 				DF2BD4AC279E66DF000CA6B8 /* MockData.swift in Sources */,
 				DF2D1DE5279DBAD300E56123 /* LocationDetailView.swift in Sources */,
+				DFEC59EF27C857DA004BC118 /* AppTabViewModel.swift in Sources */,
 				DF2BD4AA279E653B000CA6B8 /* DDGProfile.swift in Sources */,
 				DF2BD4C727A11129000CA6B8 /* PhotoPicker.swift in Sources */,
 				DF2BD4A8279E61B1000CA6B8 /* DDGLocation.swift in Sources */,
