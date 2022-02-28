@@ -80,6 +80,8 @@ struct ProfileView: View {
             if viewModel.isLoading { LoadingView() }
         }
         .navigationTitle("Profile")
+        // Fix different screen size
+        .navigationBarTitleDisplayMode(DeviceTypes.isiPhone8Standard ? .inline : .automatic)
             .toolbar {
                 Button {
                     dismissKeyboard()
