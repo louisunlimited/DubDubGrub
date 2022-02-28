@@ -120,7 +120,6 @@ final class LocationDetailViewModel: ObservableObject {
                             
                             isCheckedIn = checkInStatus == .checkedIn
                             
-                            print("✅")
                         case .failure(_):
                             alertItem = AlertContext.unableToCheckInOrOut
                         }
