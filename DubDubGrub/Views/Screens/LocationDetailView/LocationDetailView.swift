@@ -37,20 +37,23 @@ struct LocationDetailView: View {
                             viewModel.getDirectionsToLocation()
                         } label: {
                             LocationActionButton(color: .brandPrimary, imageName: "location.fill")
-                                .accessibilityLabel(Text("Get Directions"))
+                            
                         }
+                        .accessibilityLabel(Text("Get Directions"))
                         
                         Link(destination: URL(string: viewModel.location.websiteURL)!, label: {
                             LocationActionButton(color: .brandPrimary, imageName: "network")
-                                .accessibilityLabel(Text("Go to website"))
+                            
                         })
+                            .accessibilityRemoveTraits(.isButton)
+                            .accessibilityLabel(Text("Go to website"))
                         
                         Button {
                             viewModel.callLocation()
                         } label: {
                             LocationActionButton(color: .brandPrimary, imageName: "phone.fill")
-                                .accessibilityLabel(Text("Call location"))
                         }
+                        .accessibilityLabel(Text("Call location"))
                         if let _ = CloudKitManager.shared.profileRecordID {
                             Button {
                                 viewModel.updateCheckInStatus(to: viewModel.isCheckedIn ? .checkedOut : .checkedIn)
@@ -58,9 +61,8 @@ struct LocationDetailView: View {
                             } label: {
                                 LocationActionButton(color: viewModel.isCheckedIn ? .grubRed : .brandPrimary,
                                                      imageName: viewModel.isCheckedIn ? "person.fill.xmark" : "person.fill.checkmark")
-                                    .accessibilityLabel(Text(viewModel.isCheckedIn ? "Check out of location" : "Check into location"))
-                                    
                             }
+                            .accessibilityLabel(Text(viewModel.isCheckedIn ? "Check out of location" : "Check into location"))
                         }
                     }
                 }
@@ -84,9 +86,11 @@ struct LocationDetailView: View {
                                 ForEach(viewModel.checkedInProfiles) { profile in
                                     FirstNameAvatarView(profile: profile)
                                         .accessibilityElement(children: .ignore)
+                                        .accessibilityAddTraits(.isButton)
+                                        .accessibilityHint(Text("Show \(profile.firstName)'s profile pop up"))
                                         .accessibilityLabel(Text("\(profile.firstName) \(profile.lastName)"))
                                         .onTapGesture {
-                                            viewModel.isShowingProfileModal = true
+                                            viewModel.selectedProfile = profile
                                         }
                                 }
                             })
@@ -99,16 +103,19 @@ struct LocationDetailView: View {
                 
                 Spacer()
             }
+            .accessibilityHidden(viewModel.isShowingProfileModal)
             
             if viewModel.isShowingProfileModal {
                 Color(.systemBackground)
                     .ignoresSafeArea()
                     .opacity(0.9)
-//                    .transition(.opacity)
+                //                    .transition(.opacity)
                     .transition(AnyTransition.opacity.animation(.easeOut(duration: 0.35)))
                     .zIndex(1)
+                    .accessibilityHidden(true)
                 
-                ProfileModalView(isShowingProfileModal: $viewModel.isShowingProfileModal, profile: DDGProfile(record: MockData.profile))
+                ProfileModalView(isShowingProfileModal: $viewModel.isShowingProfileModal,
+                                 profile: viewModel.selectedProfile!)
                     .transition(.opacity.combined(with: .slide))
                     .animation(.easeOut)
                     .zIndex(2)
