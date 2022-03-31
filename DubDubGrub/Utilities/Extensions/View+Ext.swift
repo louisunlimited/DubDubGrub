@@ -24,4 +24,12 @@ extension View {
         // .success .error etc -> different types of haptic
         genrator.notificationOccurred(.success)
     }
+    
+    func embedInScrollView() -> some View {
+        GeometryReader { geo in
+            ScrollView {
+                self.frame(minHeight: geo.size.height, maxHeight: .infinity)
+            }
+        }
+    }
 }

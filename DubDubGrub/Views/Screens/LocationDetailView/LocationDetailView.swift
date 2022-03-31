@@ -13,6 +13,8 @@ struct LocationDetailView: View {
     // @ ObservedObject - relying on the data from the previous screen and the vm is passed from the previous screen
     @ObservedObject var viewModel: LocationDetailViewModel
     
+    @Environment(\.sizeCategory) var sizeCategory
+    
     var body: some View {
         ZStack {
             VStack(spacing: 16) {
@@ -45,8 +47,8 @@ struct LocationDetailView: View {
                             LocationActionButton(color: .brandPrimary, imageName: "network")
                             
                         })
-                            .accessibilityRemoveTraits(.isButton)
-                            .accessibilityLabel(Text("Go to website"))
+                        .accessibilityRemoveTraits(.isButton)
+                        .accessibilityLabel(Text("Go to website"))
                         
                         Button {
                             viewModel.callLocation()
@@ -82,7 +84,7 @@ struct LocationDetailView: View {
                             .foregroundColor(.secondary)
                     } else {
                         ScrollView {
-                            LazyVGrid(columns: viewModel.columns , content: {
+                            LazyVGrid(columns: viewModel.determineColumns(for: sizeCategory) , content: {
                                 ForEach(viewModel.checkedInProfiles) { profile in
                                     FirstNameAvatarView(profile: profile)
                                         .accessibilityElement(children: .ignore)
@@ -90,7 +92,7 @@ struct LocationDetailView: View {
                                         .accessibilityHint(Text("Show \(profile.firstName)'s profile pop up"))
                                         .accessibilityLabel(Text("\(profile.firstName) \(profile.lastName)"))
                                         .onTapGesture {
-                                            viewModel.selectedProfile = profile
+                                            viewModel.show(profile: profile, in: sizeCategory)
                                         }
                                 }
                             })
@@ -106,7 +108,7 @@ struct LocationDetailView: View {
             .accessibilityHidden(viewModel.isShowingProfileModal)
             
             if viewModel.isShowingProfileModal {
-                Color(.systemBackground)
+                Color(.black)
                     .ignoresSafeArea()
                     .opacity(0.9)
                 //                    .transition(.opacity)
@@ -116,14 +118,26 @@ struct LocationDetailView: View {
                 
                 ProfileModalView(isShowingProfileModal: $viewModel.isShowingProfileModal,
                                  profile: viewModel.selectedProfile!)
-                    .transition(.opacity.combined(with: .slide))
-                    .animation(.easeOut)
-                    .zIndex(2)
+                .transition(.opacity.combined(with: .slide))
+                .animation(.easeOut)
+                .zIndex(2)
             }
         }
         .onAppear{
             viewModel.getCheckedInProfiles()
             viewModel.getCheckedInStatus()
+        }
+        .sheet(isPresented: $viewModel.isShowingProfileSheet) {
+            NavigationView {
+                ProfileSheetView(profile: viewModel.selectedProfile!)
+                    .toolbar {
+                        Button("Dismiss") {
+                            viewModel.isShowingProfileSheet = false
+                        }
+                    }
+                    .accentColor(.brandPrimary)
+            }
+            
         }
         .alert(item: $viewModel.alertItem, content: { alertItem in
             Alert(title: alertItem.title, message: alertItem.message, dismissButton: alertItem.dismissedButton)
@@ -137,8 +151,9 @@ struct LocationDetailView: View {
 struct LocationDetailView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
-            LocationDetailView(viewModel: LocationDetailViewModel(location: DDGLocation(record: MockData.location)))
+            LocationDetailView(viewModel: LocationDetailViewModel(location: DDGLocation(record: MockData.chipotle)))
         }
+        .environment(\.sizeCategory, .extraExtraExtraLarge)
     }
 }
 
@@ -165,11 +180,14 @@ struct LocationActionButton: View {
 
 struct FirstNameAvatarView: View {
     
+    @Environment(\.sizeCategory) var sizeCategory
+    
     var profile: DDGProfile
     
     var body: some View {
         VStack {
-            AvatarView(image: profile.createAvatarImage(), size: 64)
+            AvatarView(image: profile.createAvatarImage(),
+                       size: sizeCategory >= .accessibilityMedium ? 100 : 64)
             
             Text(profile.firstName)
                 .bold()
@@ -209,9 +227,8 @@ struct DiscriptionView: View {
     
     var body: some View {
         Text(text)
-            .lineLimit(3)
-            .multilineTextAlignment(.center)
             .minimumScaleFactor(0.75)
+            .fixedSize(horizontal: false, vertical: true)
             .padding(.horizontal)
     }
 }

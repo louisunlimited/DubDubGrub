@@ -68,7 +68,7 @@ struct ProfileView: View {
                         .frame(height: 100)
                         .overlay(RoundedRectangle(cornerRadius: 8)
                                     .stroke(.secondary, lineWidth: 1))
-                        .accessibilityLabel(Text("Bio")
+                        .accessibilityLabel(Text("Bio"))
                         .accessibilityHint(Text("This text field has a 100 character maximun"))
                 }
                 .padding(.horizontal, 20)
