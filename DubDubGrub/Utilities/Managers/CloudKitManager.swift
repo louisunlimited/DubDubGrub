@@ -50,17 +50,17 @@ final class CloudKitManager {
         //Main container
         CKContainer.default().publicCloudDatabase.perform(query, inZoneWith: nil) { records, error in
             // If went bad
-            guard error == nil else {
+            guard let records = records, error == nil else {
                 completed(.failure(error!))
                 return
             }
             
             //Just in case we are not force-unwrapping data here and cause unexpected crash
             //If good
-            guard let records = records else { return }
+            //            guard let records = records else { return }
             
             //$0 means as you iterate through the array
-            let locations = records.map {$0.convertToDDGLocation()}
+            let locations = records.map(DDGLocation.init)
             
             //            var locations: [DDGLocation] = []
             //
@@ -85,7 +85,7 @@ final class CloudKitManager {
                 completed(.failure(error!))
                 return
             }
-            let profile = records.map {$0.convertToDDGProfile()}
+            let profile = records.map(DDGProfile.init)
             completed(.success(profile))
         }
     }
@@ -102,21 +102,66 @@ final class CloudKitManager {
         operation.recordFetchedBlock = {record in
             // Build dict
             let profile = DDGProfile(record: record)
-            
-            guard let locationReference = profile.isCheckedIn else { return }
-            
+            guard let locationReference = record[DDGProfile.kIsChechedIn] as? CKRecord.Reference else { return }
             // Look for the record ID, if exist -> append, else default to []
             checkedInProfiles[locationReference.recordID, default: []].append(profile)
             
         }
+        
         // cursor: CloudKit has a limit
         operation.queryCompletionBlock = { cursor, error in
             guard error == nil else {
                 completed(.failure(error!))
                 return
             }
-            // Handel cursor
-            completed(.success(checkedInProfiles))
+            
+            if let cursor = cursor {
+                self.continueWithCheckedInProfileDict(cursor: cursor, dictionary: checkedInProfiles) { result in
+                    switch result {
+                    case .success(let profiles):
+                        completed(.success(profiles))
+                    case .failure(let error):
+                        completed(.failure(error))
+                    }
+                }
+            } else {
+                completed(.success(checkedInProfiles))
+            }
+//            // Handel cursor
+//            completed(.success(checkedInProfiles))
+        }
+        CKContainer.default().publicCloudDatabase.add(operation)
+    }
+    
+    func continueWithCheckedInProfileDict(cursor: CKQueryOperation.Cursor,
+                                          dictionary: [CKRecord.ID: [DDGProfile]],
+                                          completed: @escaping(Result<[CKRecord.ID: [DDGProfile]], Error>) -> Void) {
+        var checkedInProfiles = dictionary
+        let operation = CKQueryOperation(cursor: cursor)
+        
+        operation.recordFetchedBlock = {record in
+            let profile = DDGProfile(record: record)
+            guard let locationReference = record[DDGProfile.kIsChechedIn] as? CKRecord.Reference else { return }
+            checkedInProfiles[locationReference.recordID, default: []].append(profile)
+        }
+        
+        operation.queryCompletionBlock = { cursor, error in
+            guard error == nil else {
+                completed(.failure(error!))
+                return
+            }
+            if let cursor = cursor {
+                self.continueWithCheckedInProfileDict(cursor: cursor, dictionary: checkedInProfiles) { result in
+                    switch result {
+                    case .success(let profiles):
+                        completed(.success(profiles))
+                    case .failure(let error):
+                        completed(.failure(error))
+                    }
+                }
+            } else {
+                completed(.success(checkedInProfiles))
+            }
         }
         CKContainer.default().publicCloudDatabase.add(operation)
     }
