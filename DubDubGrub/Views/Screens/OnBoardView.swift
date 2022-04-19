@@ -9,7 +9,7 @@ import SwiftUI
 
 struct OnBoardView: View {
     
-    @Binding var isShowingOnBoardView: Bool
+    @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
         VStack  {
@@ -18,7 +18,7 @@ struct OnBoardView: View {
                 Spacer()
                 
                 Button {
-                    isShowingOnBoardView = false
+                    presentationMode.wrappedValue.dismiss()
                 } label: {
                     XDismissButton()
                 }
@@ -44,11 +44,11 @@ struct OnBoardView: View {
 
 struct OnBoardView_Previews: PreviewProvider {
     static var previews: some View {
-        OnBoardView(isShowingOnBoardView: .constant(true))
+        OnBoardView()
     }
 }
 
-struct OnBoardInfoView: View {
+fileprivate struct OnBoardInfoView: View {
     
     var imageName: String
     var title: String

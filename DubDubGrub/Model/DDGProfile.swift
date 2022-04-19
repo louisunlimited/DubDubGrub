@@ -16,7 +16,7 @@ struct DDGProfile: Identifiable {
     static let kBio = "bio"
     static let kIsChechedIn = "isCheckedIn"
     static let kIsCheckedInNilCheck = "isCheckedInNilCheck"
-
+    
     
     let id: CKRecord.ID
     let firstName: String
@@ -39,7 +39,7 @@ struct DDGProfile: Identifiable {
     }
     
     
-    func createAvatarImage() -> UIImage {
+    var AvatarImage: UIImage {
         guard let avatar = avatar else { return PlaceHolderImage.avatar }
         return avatar.convertToUIImage(in: .square)
     }

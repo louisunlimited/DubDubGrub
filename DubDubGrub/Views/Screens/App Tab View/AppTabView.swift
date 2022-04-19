@@ -36,7 +36,7 @@ struct AppTabView: View {
         } // Get user profile once opened
         .accentColor(.brandPrimary)
         .sheet(isPresented: $viewModel.isShowingOnbardView, onDismiss: viewModel.checkIfLocationServicesIsEnabled, content: {
-            OnBoardView(isShowingOnBoardView: $viewModel.isShowingOnbardView)
+            OnBoardView()
         })
     }
 }

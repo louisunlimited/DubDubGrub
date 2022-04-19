@@ -49,8 +49,8 @@ struct ProfileView: View {
                             .accessibilityAddTraits(.isHeader)
                         Spacer()
                         if viewModel.isCheckedIn {
-                            Button {viewModel.checkOut()
-                                playHaptic()
+                            Button {
+                                viewModel.checkOut()
                             } label: {
                                  Label("Check Out", systemImage: "mappin.and.ellipse")
                                     .font(.system(size: 12,weight: .semibold))

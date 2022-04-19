@@ -12,17 +12,16 @@ extension CKAsset {
     
     func convertToUIImage(in dimension: ImageDimension) -> UIImage {
         // Distinguish what placeholder to use square/banner
-        let placeholder = ImageDimension.getPlaceholder(for: dimension)
         
         guard let fileUrl = self.fileURL else {
-            return placeholder
+            return dimension.placeholder
         }
         
         do {
             let data = try Data(contentsOf: fileUrl)
-            return UIImage(data: data) ?? placeholder
+            return UIImage(data: data) ?? dimension.placeholder
         } catch {
-            return placeholder
+            return dimension.placeholder
         }
     }
 }

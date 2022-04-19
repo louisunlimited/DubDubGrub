@@ -18,7 +18,7 @@ struct DDGAnnotation: View {
                 MapBalloon()
                     .frame(width: 100, height: 70)
                     .foregroundColor(.brandPrimary)
-                Image(uiImage: location.createSquareImage())
+                Image(uiImage: location.SquareImage)
                     .resizable()
                     .frame(width: 40, height: 40)
                     .clipShape(Circle())
@@ -36,6 +36,7 @@ struct DDGAnnotation: View {
             Text(location.name)
                 .font(.caption.weight(.semibold))
         }
+        .accessibilityLabel(Text("Map Pin \(location.name) \(number) checked in"))
     }
 }
 

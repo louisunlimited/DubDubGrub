@@ -16,31 +16,27 @@ struct LocationMapView: View {
     @Environment(\.sizeCategory) var sizeCategory
     
     var body: some View {
-        ZStack {
+        ZStack (alignment: .top) {
+            
             Map(coordinateRegion: $viewModel.region, showsUserLocation: true, annotationItems: locationManager.locations) { location in
                 MapAnnotation(coordinate: location.location.coordinate, anchorPoint: CGPoint(x: 0.5, y: 0.75)) {
                     DDGAnnotation(location: location
                                   , number: viewModel.checkedInProfiles[location.id, default: 0])
-                        .accessibilityLabel(Text("Map Pin \(location.name) \(viewModel.checkedInProfiles[location.id, default: 0]) person checked in"))
-                        .onTapGesture {
-                            locationManager.selectedLocation = location
-                            
-                            if let _ = locationManager.selectedLocation {
-                                viewModel.isShowingDetailView = true
-                            }
+                    .onTapGesture {
+                        locationManager.selectedLocation = location
+                        
+                        if let _ = locationManager.selectedLocation {
+                            viewModel.isShowingDetailView = true
                         }
+                    }
                 }
             }
             .accentColor(.grubRed)
             .ignoresSafeArea()
             
-            VStack {
-                LogoView(frameWidth: 125)
-                    .shadow(radius: 10)
-//                    .accessibilityHidden(true)
-                
-                Spacer()
-            }
+            LogoView(frameWidth: 125)
+                .shadow(radius: 10)
+            //  .accessibilityHidden(true)
         }
         .sheet(isPresented: $viewModel.isShowingDetailView) {
             NavigationView {
@@ -53,9 +49,7 @@ struct LocationMapView: View {
                     }
             }
         }
-        .alert(item: $viewModel.alertItem, content: { alertItem in
-            Alert(title: alertItem.title, message: alertItem.message, dismissButton: alertItem.dismissedButton)
-        })
+        .alert(item: $viewModel.alertItem, content: { $0.alert })
         .onAppear {
             //We don't want to get this everytime
             if locationManager.locations.isEmpty {
@@ -68,6 +62,6 @@ struct LocationMapView: View {
 
 struct LocationMapView_Previews: PreviewProvider {
     static var previews: some View {
-        LocationMapView()
+        LocationMapView().environmentObject(LocationManager())
     }
 }

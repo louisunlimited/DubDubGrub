@@ -17,13 +17,7 @@ extension View {
     func dismissKeyboard() {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
-    
-    
-    func playHaptic() {
-        let genrator = UINotificationFeedbackGenerator()
-        // .success .error etc -> different types of haptic
-        genrator.notificationOccurred(.success)
-    }
+
     
     func embedInScrollView() -> some View {
         GeometryReader { geo in
