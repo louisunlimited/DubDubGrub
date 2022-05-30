@@ -29,54 +29,46 @@ struct LocationDetailView: View {
                 
                 DiscriptionView(text: viewModel.location.description)
                 
-                ZStack {
-                    Capsule()
-                        .frame(height: 80)
-                        .foregroundColor(Color(.secondarySystemBackground))
+                HStack(spacing: 20) {
+                    Button {
+                        viewModel.getDirectionsToLocation()
+                    } label: {
+                        LocationActionButton(color: .brandPrimary, imageName: "location.fill")
+                        
+                    }
+                    .accessibilityLabel(Text("Get Directions"))
                     
-                    HStack(spacing: 20) {
-                        Button {
-                            viewModel.getDirectionsToLocation()
-                        } label: {
-                            LocationActionButton(color: .brandPrimary, imageName: "location.fill")
-                            
-                        }
-                        .accessibilityLabel(Text("Get Directions"))
+                    Link(destination: URL(string: viewModel.location.websiteURL)!, label: {
+                        LocationActionButton(color: .brandPrimary, imageName: "network")
                         
-                        Link(destination: URL(string: viewModel.location.websiteURL)!, label: {
-                            LocationActionButton(color: .brandPrimary, imageName: "network")
-                            
-                        })
-                        .accessibilityRemoveTraits(.isButton)
-                        .accessibilityLabel(Text("Go to website"))
-                        
+                    })
+                    .accessibilityRemoveTraits(.isButton)
+                    .accessibilityLabel(Text("Go to website"))
+                    
+                    Button {
+                        viewModel.callLocation()
+                    } label: {
+                        LocationActionButton(color: .brandPrimary, imageName: "phone.fill")
+                    }
+                    .accessibilityLabel(Text("Call location"))
+                    if let _ = CloudKitManager.shared.profileRecordID {
                         Button {
-                            viewModel.callLocation()
+                            viewModel.updateCheckInStatus(to: viewModel.isCheckedIn ? .checkedOut : .checkedIn)
                         } label: {
-                            LocationActionButton(color: .brandPrimary, imageName: "phone.fill")
+                            LocationActionButton(color: viewModel.buttonColor,
+                                                 imageName: viewModel.buttonImageTitle)
                         }
-                        .accessibilityLabel(Text("Call location"))
-                        if let _ = CloudKitManager.shared.profileRecordID {
-                            Button {
-                                viewModel.updateCheckInStatus(to: viewModel.isCheckedIn ? .checkedOut : .checkedIn)
-                            } label: {
-                                LocationActionButton(color: viewModel.isCheckedIn ? .grubRed : .brandPrimary,
-                                                     imageName: viewModel.isCheckedIn ? "person.fill.xmark" : "person.fill.checkmark")
-                                .accessibilityLabel(Text(viewModel.isCheckedIn ? "Check out of location" : "Check into location"))
-                            }
-                            .disabled(viewModel.isLoading)
-                            
-                        }
+                        .accessibilityLabel(Text(viewModel.buttonA11yLabel))
+                        .disabled(viewModel.isLoading)
+                        
                     }
                 }
-                .padding(.horizontal)
+                .padding(EdgeInsets(top: 10, leading: 20, bottom: 10, trailing: 20))
+                .background(Color(.secondarySystemBackground))
+                .clipShape(Capsule())
                 
-                Text("Who's Here?")
-                    .font(.title2.weight(.bold))
-                    .padding(.top, 30)
-                    .accessibilityAddTraits(.isHeader)
-                    .accessibilityLabel(Text("Who's here? \(viewModel.checkedInProfiles.count) checked in."))
-                    .accessibilityHint(Text("Bottom section is scrollable"))
+                GridHeaderTextView(number: viewModel.checkedInProfiles.count)
+                
                 ZStack {
                     if viewModel.checkedInProfiles.isEmpty {
                         // Empty state
@@ -88,13 +80,7 @@ struct LocationDetailView: View {
                             LazyVGrid(columns: viewModel.determineColumns(for: sizeCategory) , content: {
                                 ForEach(viewModel.checkedInProfiles) { profile in
                                     FirstNameAvatarView(profile: profile)
-                                        .accessibilityElement(children: .ignore)
-                                        .accessibilityAddTraits(.isButton)
-                                        .accessibilityHint(Text("Show \(profile.firstName)'s profile pop up"))
-                                        .accessibilityLabel(Text("\(profile.firstName) \(profile.lastName)"))
-                                        .onTapGesture {
-                                            viewModel.show(profile, in: sizeCategory)
-                                        }
+                                        .onTapGesture { viewModel.show(profile, in: sizeCategory) }
                                 }
                             })
                         }
@@ -190,6 +176,10 @@ fileprivate struct FirstNameAvatarView: View {
                 .lineLimit(1)
                 .minimumScaleFactor(0.75)
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityAddTraits(.isButton)
+        .accessibilityHint(Text("Show \(profile.firstName)'s profile pop up"))
+        .accessibilityLabel(Text("\(profile.firstName) \(profile.lastName)"))
     }
 }
 
@@ -226,5 +216,18 @@ fileprivate struct DiscriptionView: View {
             .minimumScaleFactor(0.75)
             .fixedSize(horizontal: false, vertical: true)
             .padding(.horizontal)
+    }
+}
+
+
+fileprivate struct GridHeaderTextView: View {
+    var number: Int
+    var body: some View {
+        Text("Who's Here?")
+            .font(.title2.weight(.bold))
+            .padding(.top, 30)
+            .accessibilityAddTraits(.isHeader)
+            .accessibilityLabel(Text("Who's here? \(number) checked in."))
+            .accessibilityHint(Text("Bottom section is scrollable"))
     }
 }
