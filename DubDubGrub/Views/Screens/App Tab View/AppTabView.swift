@@ -34,7 +34,6 @@ struct AppTabView: View {
             CloudKitManager.shared.getUserRecord()
             viewModel.runStartupChecks()
         } // Get user profile once opened
-        .accentColor(.brandPrimary)
         .sheet(isPresented: $viewModel.isShowingOnbardView, onDismiss: viewModel.checkIfLocationServicesIsEnabled, content: {
             OnBoardView()
         })

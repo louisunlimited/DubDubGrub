@@ -38,8 +38,8 @@ extension LocationDetailView {
             self.location  = location
         }
         
-        func determineColumns(for sizeCategory: ContentSizeCategory) -> [GridItem] {
-            let numberOfCols = sizeCategory >= .accessibilityMedium ? 1 : 3
+        func determineColumns(for dynamicTypeSize: DynamicTypeSize) -> [GridItem] {
+            let numberOfCols = dynamicTypeSize >= .accessibility3 ? 1 : 3
             return Array(repeating: GridItem(.flexible()), count: numberOfCols)
         }
         
@@ -74,7 +74,7 @@ extension LocationDetailView {
             guard let profileRecordID = CloudKitManager.shared.profileRecordID else { return }
             
             CloudKitManager.shared.fetchRecord(with: profileRecordID) { [self] result in
-                DispatchQueue.main.async {
+                DispatchQueue.main.async { [self] in
                     switch result{
                     case .success(let record):
                         if let reference = record[DDGProfile.kIsChechedIn] as? CKRecord.Reference {
@@ -120,7 +120,7 @@ extension LocationDetailView {
                     
                     // Save the updated profile to CloudKit
                     CloudKitManager.shared.save(record: record) { result in
-                        DispatchQueue.main.async {
+                        DispatchQueue.main.async { [self] in
                             hideLoadingView()
                             switch result{
                             case .success(let record):
@@ -153,7 +153,7 @@ extension LocationDetailView {
         func getCheckedInProfiles() {
             showLoadingView()
             CloudKitManager.shared.getCheckedInProfiles(for: location.id) { [self] result in
-                DispatchQueue.main.async {
+                DispatchQueue.main.async { [self] in
                     switch result {
                     case .success(let profiles):
                         checkedInProfiles = profiles
@@ -166,9 +166,9 @@ extension LocationDetailView {
         }
         
         
-        func show(_ profile:DDGProfile, in sizeCategory:ContentSizeCategory) {
+        func show(_ profile:DDGProfile, in dynamicTypeSize:DynamicTypeSize) {
             selectedProfile = profile
-            if sizeCategory >= .accessibilityMedium {
+            if dynamicTypeSize >= .accessibility3 {
                 isShowingProfileSheet = true
             } else {
                 isShowingProfileModal = true

@@ -83,7 +83,7 @@ final class ProfileViewModel: ObservableObject {
         guard let profileRecordID = CloudKitManager.shared.profileRecordID else { return }
         
         CloudKitManager.shared.fetchRecord(with: profileRecordID) { [self] result in
-            DispatchQueue.main.async {
+            DispatchQueue.main.async {[self] in
                 switch result{
                 case .success(let record):
                     if let _ = record[DDGProfile.kIsChechedIn] as? CKRecord.Reference {
@@ -110,7 +110,7 @@ final class ProfileViewModel: ObservableObject {
                 record[DDGProfile.kIsChechedIn] = nil
                 record[DDGProfile.kIsCheckedInNilCheck] = nil
                 CloudKitManager.shared.save(record: record) { [self] resul in
-                    DispatchQueue.main.async {
+                    DispatchQueue.main.async { [self] in
                         switch result {
                         case .success(_):
                             isCheckedIn = false

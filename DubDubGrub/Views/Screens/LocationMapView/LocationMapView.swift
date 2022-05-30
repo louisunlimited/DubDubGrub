@@ -13,7 +13,7 @@ struct LocationMapView: View {
     // A reference to the locationManager in DubDubGrubApp.swift
     @EnvironmentObject private var locationManager: LocationManager
     @StateObject private var viewModel = LocationViewModel()
-    @Environment(\.sizeCategory) var sizeCategory
+    @Environment(\.dynamicTypeSize) var DynamicTypeSize
     
     var body: some View {
         ZStack (alignment: .top) {
@@ -40,12 +40,11 @@ struct LocationMapView: View {
         }
         .sheet(isPresented: $viewModel.isShowingDetailView) {
             NavigationView {
-                viewModel.createLocationDetailView(for: locationManager.selectedLocation!, in: sizeCategory)
+                viewModel.createLocationDetailView(for: locationManager.selectedLocation!, in: DynamicTypeSize)
                     .toolbar {
                         Button("Dismiss") {
                             viewModel.isShowingDetailView = false
                         }
-                        .accentColor(.brandPrimary)
                     }
             }
         }

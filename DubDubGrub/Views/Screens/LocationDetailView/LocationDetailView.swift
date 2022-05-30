@@ -13,7 +13,7 @@ struct LocationDetailView: View {
     // @ ObservedObject - relying on the data from the previous screen and the vm is passed from the previous screen
     @ObservedObject var viewModel: LocationDetailViewModel
     
-    @Environment(\.sizeCategory) var sizeCategory
+    @Environment(\.dynamicTypeSize) var dynamicTypeSize
     
     var body: some View {
         ZStack {
@@ -77,10 +77,13 @@ struct LocationDetailView: View {
                             .foregroundColor(.secondary)
                     } else {
                         ScrollView {
-                            LazyVGrid(columns: viewModel.determineColumns(for: sizeCategory) , content: {
+                            LazyVGrid(columns: viewModel.determineColumns(for: dynamicTypeSize) , content: {
                                 ForEach(viewModel.checkedInProfiles) { profile in
                                     FirstNameAvatarView(profile: profile)
-                                        .onTapGesture { viewModel.show(profile, in: sizeCategory) }
+                                        .onTapGesture {
+                                            withAnimation{ viewModel.show(profile, in: dynamicTypeSize)}
+                                            
+                                        }
                                 }
                             })
                         }
@@ -104,7 +107,6 @@ struct LocationDetailView: View {
                 ProfileModalView(isShowingProfileModal: $viewModel.isShowingProfileModal,
                                  profile: viewModel.selectedProfile!)
                 .transition(.opacity.combined(with: .slide))
-                .animation(.easeOut)
                 .zIndex(2)
             }
         }
@@ -120,7 +122,6 @@ struct LocationDetailView: View {
                             viewModel.isShowingProfileSheet = false
                         }
                     }
-                    .accentColor(.brandPrimary)
             }
             
         }
@@ -162,14 +163,14 @@ fileprivate struct LocationActionButton: View {
 
 fileprivate struct FirstNameAvatarView: View {
     
-    @Environment(\.sizeCategory) var sizeCategory
+    @Environment(\.dynamicTypeSize) var dynamicTypeSize
     
     var profile: DDGProfile
     
     var body: some View {
         VStack {
             AvatarView(image: profile.AvatarImage,
-                       size: sizeCategory >= .accessibilityMedium ? 100 : 64)
+                       size: dynamicTypeSize >= .accessibility3 ? 100 : 64)
             
             Text(profile.firstName)
                 .bold()

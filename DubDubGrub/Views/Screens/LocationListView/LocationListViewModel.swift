@@ -35,8 +35,8 @@ extension LocationListView {
             return "\(location.name) \(count) \(personPlurality) checked in."
         }
         
-        @ViewBuilder func createLocationDetailView(for location:DDGLocation, in sizeCategory:ContentSizeCategory) -> some View {
-            if sizeCategory >= .accessibilityMedium {
+        @ViewBuilder func createLocationDetailView(for location:DDGLocation, in dynamiTypeSize : DynamicTypeSize) -> some View {
+            if dynamiTypeSize >= .accessibility3 {
                 LocationDetailView(viewModel: LocationDetailView.LocationDetailViewModel(location: location)).embedInScrollView()
             } else {
                 LocationDetailView(viewModel: LocationDetailView.LocationDetailViewModel(location: location))
