@@ -27,13 +27,11 @@ extension LocationListView {
 //                }
 //            }
 //        }
-        func getCheckedInProfilesDictionary() {
-            Task {
-                do {
-                    checkedInProfiles = try await CloudKitManager.shared.getCheckedInProfilesDictionary()
-                } catch {
-                    alertItem = AlertContext.unableToGetALLCheckInProfiles
-                }
+        func getCheckedInProfilesDictionary() async {
+            do {
+                checkedInProfiles = try await CloudKitManager.shared.getCheckedInProfilesDictionary()
+            } catch {
+                alertItem = AlertContext.unableToGetALLCheckInProfiles
             }
         }
         
