@@ -34,9 +34,9 @@ struct AppTabView: View {
             CloudKitManager.shared.getUserRecord()
             viewModel.runStartupChecks()
         } // Get user profile once opened
-        .sheet(isPresented: $viewModel.isShowingOnbardView, onDismiss: viewModel.checkIfLocationServicesIsEnabled, content: {
+        .sheet(isPresented: $viewModel.isShowingOnbardView) {
             OnBoardView()
-        })
+        }
     }
 }
 
