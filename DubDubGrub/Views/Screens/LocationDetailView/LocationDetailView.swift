@@ -110,7 +110,7 @@ struct LocationDetailView: View {
                 .zIndex(2)
             }
         }
-        .onAppear{
+        .task{
             viewModel.getCheckedInProfiles()
             viewModel.getCheckedInStatus()
         }

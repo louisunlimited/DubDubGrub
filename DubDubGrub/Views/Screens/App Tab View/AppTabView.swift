@@ -30,8 +30,8 @@ struct AppTabView: View {
                 Label("Profile", systemImage: "person")
             }
         }
-        .onAppear{
-            CloudKitManager.shared.getUserRecord()
+        .task{
+            try? await CloudKitManager.shared.getUserRecord()
             viewModel.runStartupChecks()
         } // Get user profile once opened
         .sheet(isPresented: $viewModel.isShowingOnbardView) {

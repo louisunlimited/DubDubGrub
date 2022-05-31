@@ -9,7 +9,7 @@ import CloudKit
 
 enum ProfileContext { case create, update }
 
-final class ProfileViewModel: ObservableObject {
+@MainActor final class ProfileViewModel: ObservableObject {
     
     @Published var isCheckedIn = false
     @Published var firstName   = ""
@@ -57,45 +57,75 @@ final class ProfileViewModel: ObservableObject {
         userRecord["userProfile"] = CKRecord.Reference(recordID: profileRecord.recordID, action: .none)
         
         showLoadingView()
-        CloudKitManager.shared.batchSave(records: [userRecord, profileRecord]) { result in
-            DispatchQueue.main.async { [self] in
-                hideLoadingView()
-                switch result {
-                case .success(let records):
-                    for record in records where record.recordType == RecordType.profile {
-                        ExisitingProfileRecord = record
-                        CloudKitManager.shared.profileRecordID = record.recordID
-                        profileContext = .update
-                        
-                    }
-                    alertItem = AlertContext.createProfileSuccess
-                    break
-                case .failure(_):
-                    alertItem = AlertContext.createProfileFaliure
-                    break
+        
+        Task {
+            do {
+                let records = try await CloudKitManager.shared.batchSave(records: [userRecord, profileRecord])
+                for record in records where record.recordType == RecordType.profile {
+                    ExisitingProfileRecord = record
+                    CloudKitManager.shared.profileRecordID = record.recordID
+                    profileContext = .update
+                    
                 }
+                alertItem = AlertContext.createProfileSuccess
+            } catch {
+                hideLoadingView()
+                alertItem = AlertContext.createProfileFaliure
             }
         }
+        
+        
+//        CloudKitManager.shared.batchSave(records: [userRecord, profileRecord]) { result in
+//            DispatchQueue.main.async { [self] in
+//                hideLoadingView()
+//                switch result {
+//                case .success(let records):
+//                    for record in records where record.recordType == RecordType.profile {
+//                        ExisitingProfileRecord = record
+//                        CloudKitManager.shared.profileRecordID = record.recordID
+//                        profileContext = .update
+//
+//                    }
+//                    alertItem = AlertContext.createProfileSuccess
+//                    break
+//                case .failure(_):
+//                    alertItem = AlertContext.createProfileFaliure
+//                    break
+//                }
+//            }
+//        }
     }
     
     
     func getCheckedInStatus() {
         guard let profileRecordID = CloudKitManager.shared.profileRecordID else { return }
         
-        CloudKitManager.shared.fetchRecord(with: profileRecordID) { [self] result in
-            DispatchQueue.main.async {[self] in
-                switch result{
-                case .success(let record):
-                    if let _ = record[DDGProfile.kIsChechedIn] as? CKRecord.Reference {
-                        isCheckedIn = true
-                    } else {
-                        isCheckedIn = false
-                    }
-                case .failure(_):
-                    break
+        Task {
+            do {
+                let record = try await CloudKitManager.shared.fetchRecord(with: profileRecordID)
+                if let _ = record[DDGProfile.kIsChechedIn] as? CKRecord.Reference {
+                    isCheckedIn = true
+                } else {
+                    isCheckedIn = false
                 }
+            } catch {
+                print("ERROR OCCRUS!")
             }
         }
+//        CloudKitManager.shared.fetchRecord(with: profileRecordID) { [self] result in
+//            DispatchQueue.main.async {[self] in
+//                switch result{
+//                case .success(let record):
+//                    if let _ = record[DDGProfile.kIsChechedIn] as? CKRecord.Reference {
+//                        isCheckedIn = true
+//                    } else {
+//                        isCheckedIn = false
+//                    }
+//                case .failure(_):
+//                    break
+//                }
+//            }
+//        }
     }
     
     
@@ -104,27 +134,46 @@ final class ProfileViewModel: ObservableObject {
             alertItem = AlertContext.unableToGetProfile
             return
         }
-        CloudKitManager.shared.fetchRecord(with: profileID) { result in
-            switch result {
-            case .success(let record):
+        
+        showLoadingView()
+        
+        Task {
+            do {
+                let record = try await CloudKitManager.shared.fetchRecord(with: profileID)
                 record[DDGProfile.kIsChechedIn] = nil
                 record[DDGProfile.kIsCheckedInNilCheck] = nil
-                CloudKitManager.shared.save(record: record) { [self] resul in
-                    DispatchQueue.main.async { [self] in
-                        switch result {
-                        case .success(_):
-                            isCheckedIn = false
-                        case .failure(_):
-                            alertItem = AlertContext.unableToCheckInOrOut
-                        }
-                    }
-                }
-            case .failure(_):
-                DispatchQueue.main.async {
-                    self.alertItem = AlertContext.unableToCheckInOrOut
-                }
+                
+                let _ = try await CloudKitManager.shared.save(record: record)
+                Hapticmanager.playSuccess()
+                isCheckedIn = false
+                hideLoadingView()
+                
+            } catch {
+                hideLoadingView()
+                alertItem = AlertContext.unableToCheckInOrOut
             }
         }
+//        CloudKitManager.shared.fetchRecord(with: profileID) { result in
+//            switch result {
+//            case .success(let record):
+//                record[DDGProfile.kIsChechedIn] = nil
+//                record[DDGProfile.kIsCheckedInNilCheck] = nil
+//                CloudKitManager.shared.save(record: record) { [self] resul in
+//                    DispatchQueue.main.async { [self] in
+//                        switch result {
+//                        case .success(_):
+//                            isCheckedIn = false
+//                        case .failure(_):
+//                            alertItem = AlertContext.unableToCheckInOrOut
+//                        }
+//                    }
+//                }
+//            case .failure(_):
+//                DispatchQueue.main.async {
+//                    self.alertItem = AlertContext.unableToCheckInOrOut
+//                }
+//            }
+//        }
     }
     
     
@@ -140,26 +189,46 @@ final class ProfileViewModel: ObservableObject {
         //get profile id from reference
         let profileRecordID = profileReference.recordID
         
-        CloudKitManager.shared.fetchRecord(with: profileRecordID) { result in
-            DispatchQueue.main.async { [self] in
-                switch result {
-                case .success(let record):
-                    ExisitingProfileRecord = record
-                    // Convert to a profile
-                    let profile = DDGProfile(record: record)
-                    // Update UI
-                    firstName = profile.firstName
-                    lastName = profile.lastName
-                    companyName = profile.companyName
-                    bio = profile.bio
-                    avatar = profile.AvatarImage
-                    
-                case .failure(_):
-                    alertItem = AlertContext.unableToGetProfile
-                    break
-                }
+        showLoadingView()
+        
+        Task {
+            do {
+                let record = try await CloudKitManager.shared.fetchRecord(with: profileRecordID)
+                ExisitingProfileRecord = record
+
+                let profile = DDGProfile(record: record)
+                firstName = profile.firstName
+                lastName = profile.lastName
+                companyName = profile.companyName
+                bio = profile.bio
+                avatar = profile.AvatarImage
+                
+                hideLoadingView()
+            } catch {
+                alertItem = AlertContext.unableToGetProfile
             }
         }
+        
+//        CloudKitManager.shared.fetchRecord(with: profileRecordID) { result in
+//            DispatchQueue.main.async { [self] in
+//                switch result {
+//                case .success(let record):
+//                    ExisitingProfileRecord = record
+//                    // Convert to a profile
+//                    let profile = DDGProfile(record: record)
+//                    // Update UI
+//                    firstName = profile.firstName
+//                    lastName = profile.lastName
+//                    companyName = profile.companyName
+//                    bio = profile.bio
+//                    avatar = profile.AvatarImage
+//
+//                case .failure(_):
+//                    alertItem = AlertContext.unableToGetProfile
+//                    break
+//                }
+//            }
+//        }
     }
     
     
@@ -182,17 +251,28 @@ final class ProfileViewModel: ObservableObject {
         
         showLoadingView()
         
-        CloudKitManager.shared.save(record: profileRecord) { result in
-            DispatchQueue.main.async { [self] in
+        Task {
+            do {
+                let _ = try await CloudKitManager.shared.save(record: profileRecord)
                 hideLoadingView()
-                switch result {
-                case .success(_):
-                    alertItem = AlertContext.updateProfileSuccess
-                case .failure(_):
-                    alertItem = AlertContext.updateProfileFailed
-                }
+                alertItem = AlertContext.updateProfileSuccess
+            } catch {
+                hideLoadingView()
+                alertItem = AlertContext.updateProfileFailed
             }
         }
+        
+//        CloudKitManager.shared.save(record: profileRecord) { result in
+//            DispatchQueue.main.async { [self] in
+//                hideLoadingView()
+//                switch result {
+//                case .success(_):
+//                    alertItem = AlertContext.updateProfileSuccess
+//                case .failure(_):
+//                    alertItem = AlertContext.updateProfileFailed
+//                }
+//            }
+//        }
         
     }
     

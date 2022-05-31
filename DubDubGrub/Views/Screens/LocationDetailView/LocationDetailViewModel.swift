@@ -15,7 +15,7 @@ enum CheckInStatus {
 
 extension LocationDetailView {
     
-    final class LocationDetailViewModel: ObservableObject {
+    @MainActor final class LocationDetailViewModel: ObservableObject {
         
         @Published var isLoading = false
         @Published var checkedInProfiles: [DDGProfile] = []
@@ -73,25 +73,37 @@ extension LocationDetailView {
         func getCheckedInStatus() {
             guard let profileRecordID = CloudKitManager.shared.profileRecordID else { return }
             
-            CloudKitManager.shared.fetchRecord(with: profileRecordID) { [self] result in
-                DispatchQueue.main.async { [self] in
-                    switch result{
-                    case .success(let record):
-                        if let reference = record[DDGProfile.kIsChechedIn] as? CKRecord.Reference {
-                            //                        if reference.recordID == location.id {
-                            //                            isCheckedIn = true
-                            //                        } else {
-                            //                            isCheckedIn = false
-                            //                        }
-                            isCheckedIn = reference.recordID == location.id
-                        } else {
-                            isCheckedIn = false
-                        }
-                    case .failure(_):
-                        alertItem = AlertContext.unableToGetCheckInStatus
+            Task {
+                do {
+                    let record = try await CloudKitManager.shared.fetchRecord(with: profileRecordID)
+                    if let reference = record[DDGProfile.kIsChechedIn] as? CKRecord.Reference {
+                        isCheckedIn = reference.recordID == location.id
+                    } else {
+                        isCheckedIn = false
                     }
+                } catch {
+                    alertItem = AlertContext.unableToGetCheckInStatus
                 }
             }
+            //            CloudKitManager.shared.fetchRecord(with: profileRecordID) { [self] result in
+            //                DispatchQueue.main.async { [self] in
+            //                    switch result{
+            //                    case .success(let record):
+            //                        if let reference = record[DDGProfile.kIsChechedIn] as? CKRecord.Reference {
+            //                            //                        if reference.recordID == location.id {
+            //                            //                            isCheckedIn = true
+            //                            //                        } else {
+            //                            //                            isCheckedIn = false
+            //                            //                        }
+            //                            isCheckedIn = reference.recordID == location.id
+            //                        } else {
+            //                            isCheckedIn = false
+            //                        }
+            //                    case .failure(_):
+            //                        alertItem = AlertContext.unableToGetCheckInStatus
+            //                    }
+            //                }
+            //            }
         }
         
         
@@ -105,10 +117,9 @@ extension LocationDetailView {
             
             showLoadingView()
             
-            CloudKitManager.shared.fetchRecord(with: profileRecordID) { [self] result in
-                switch result {
-                case .success(let record):
-                    // Create reference to Location
+            Task {
+                do {
+                    let record = try await CloudKitManager.shared.fetchRecord(with: profileRecordID)
                     switch checkInStatus {
                     case .checkedIn:
                         record[DDGProfile.kIsChechedIn] = CKRecord.Reference(recordID: location.id, action: .none)
@@ -118,51 +129,92 @@ extension LocationDetailView {
                         record[DDGProfile.kIsCheckedInNilCheck] = nil
                     }
                     
-                    // Save the updated profile to CloudKit
-                    CloudKitManager.shared.save(record: record) { result in
-                        DispatchQueue.main.async { [self] in
-                            hideLoadingView()
-                            switch result{
-                            case .success(let record):
-                                Hapticmanager.playSuccess()
-                                let profile = DDGProfile(record: record)
-                                switch checkInStatus {
-                                case .checkedIn:
-                                    // update checkedInProfiles array
-                                    checkedInProfiles.append(profile)
-                                case .checkedOut:
-                                    checkedInProfiles.removeAll(where: {$0.id == profile.id})
-                                }
-                                
-                                isCheckedIn.toggle()
-                                
-                            case .failure(_):
-                                alertItem = AlertContext.unableToCheckInOrOut
-                            }
-                        }
+                    let savedRecord = try await CloudKitManager.shared.save(record: record)
+                    Hapticmanager.playSuccess()
+                    let profile = DDGProfile(record: savedRecord)
+                    switch checkInStatus {
+                    case .checkedIn:
+                        // update checkedInProfiles array
+                        checkedInProfiles.append(profile)
+                    case .checkedOut:
+                        checkedInProfiles.removeAll(where: {$0.id == profile.id})
                     }
                     
-                case .failure(_):
+                    isCheckedIn.toggle()
                     hideLoadingView()
+                    
+                } catch {
                     alertItem = AlertContext.unableToCheckInOrOut
                 }
             }
+            //            CloudKitManager.shared.fetchRecord(with: profileRecordID) { [self] result in
+            //                switch result {
+            //                case .success(let record):
+            //                    // Create reference to Location
+            //                    switch checkInStatus {
+            //                    case .checkedIn:
+            //                        record[DDGProfile.kIsChechedIn] = CKRecord.Reference(recordID: location.id, action: .none)
+            //                        record[DDGProfile.kIsCheckedInNilCheck] = 1
+            //                    case .checkedOut:
+            //                        record[DDGProfile.kIsChechedIn] = nil
+            //                        record[DDGProfile.kIsCheckedInNilCheck] = nil
+            //                    }
+            //
+            //                    // Save the updated profile to CloudKit
+            //                    CloudKitManager.shared.save(record: record) { result in
+            //                        DispatchQueue.main.async { [self] in
+            //                            hideLoadingView()
+            //                            switch result{
+            //                            case .success(let record):
+            //                                Hapticmanager.playSuccess()
+            //                                let profile = DDGProfile(record: record)
+            //                                switch checkInStatus {
+            //                                case .checkedIn:
+            //                                    // update checkedInProfiles array
+            //                                    checkedInProfiles.append(profile)
+            //                                case .checkedOut:
+            //                                    checkedInProfiles.removeAll(where: {$0.id == profile.id})
+            //                                }
+            //
+            //                                isCheckedIn.toggle()
+            //
+            //                            case .failure(_):
+            //                                alertItem = AlertContext.unableToCheckInOrOut
+            //                            }
+            //                        }
+            //                    }
+            //
+            //                case .failure(_):
+            //                    hideLoadingView()
+            //                    alertItem = AlertContext.unableToCheckInOrOut
+            //                }
+            //            }
         }
         
         
         func getCheckedInProfiles() {
             showLoadingView()
-            CloudKitManager.shared.getCheckedInProfiles(for: location.id) { [self] result in
-                DispatchQueue.main.async { [self] in
-                    switch result {
-                    case .success(let profiles):
-                        checkedInProfiles = profiles
-                    case .failure(_):
-                        alertItem = AlertContext.unableToGetCheckInProfiles
-                    }
+            
+            Task {
+                do {
+                    checkedInProfiles = try await CloudKitManager.shared.getCheckedInProfiles(for: location.id)
                     hideLoadingView()
+                } catch {
+                    hideLoadingView()
+                    alertItem = AlertContext.unableToGetCheckInProfiles
                 }
             }
+            //            CloudKitManager.shared.getCheckedInProfiles(for: location.id) { [self] result in
+            //                DispatchQueue.main.async { [self] in
+            //                    switch result {
+            //                    case .success(let profiles):
+            //                        checkedInProfiles = profiles
+            //                    case .failure(_):
+            //                        alertItem = AlertContext.unableToGetCheckInProfiles
+            //                    }
+            //                    hideLoadingView()
+            //                }
+            //            }
         }
         
         
