@@ -4,4 +4,4 @@
 Users will be automatically logged in with their iCloud account. They will also be able to checkin and checkout rerstaurants.
 
 Screenshots:
-
+[images/MapView.png]
